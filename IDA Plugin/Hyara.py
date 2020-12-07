@@ -455,10 +455,10 @@ class YaraDetector(idaapi.PluginForm):
             self.tableWidget.setItem(idx, 0, QTableWidgetItem(hex(int(i[0], 16)).replace("L","")))
             self.tableWidget.setItem(idx, 1, QTableWidgetItem(i[1]))
             self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
-            text_endea = idaapi.get_segm_by_name(".text").endEA
+            text_end_ea = idaapi.get_segm_by_name(".text").end_ea
             size = idaapi.get_fileregion_ea(int(i[0], 16))
 
-            if size < text_endea:
+            if size < text_end_ea:
                 a = []
                 info = idaapi.get_inf_structure()
                 if info.is_64bit():
@@ -812,20 +812,20 @@ class Hyara(idaapi.PluginForm):
         if self.CheckBox3.isChecked(): # Use String Option
             StringData = []
             ## https://reverseengineering.stackexchange.com/questions/3603/how-to-extract-all-the-rodata-data-and-bss-section-using-idc-script-in-ida-pro
-            text_section_endEA = idaapi.get_segm_by_name(".text").endEA
+            text_section_end_ea = idaapi.get_segm_by_name(".text").end_ea
 
-            if text_section_endEA > start:
+            if text_section_end_ea > start:
                 while start <= end:
                     if "offset" in idc.print_operand(start, 0) and not any(i in idc.print_operand(start, 0) for i in blacklist):
                         variable = idc.print_operand(start, 0).split(" ")[1]
                         add = idc.get_name_ea(start,variable)
-                        string, endEA = get_string(add)
+                        string, end_ea = get_string(add)
                         StringData.append(string)
 
                     elif "offset" in idc.print_operand(start, 1) and not any(i in idc.print_operand(start, 1) for i in blacklist):
                         variable = idc.print_operand(start, 1).split(" ")[1]
                         add = idc.get_name_ea(start,variable)
-                        string, endEA = get_string(add)
+                        string, end_ea = get_string(add)
                         StringData.append(string)
                     
                     start = idc.next_head(start)
@@ -844,9 +844,9 @@ class Hyara(idaapi.PluginForm):
 
             else:
                 while start <= end:
-                    string, endEA = get_string(start)
+                    string, end_ea = get_string(start)
                     StringData.append(string)
-                    start = endEA
+                    start = end_ea
                 StringData = [x for x in StringData if x]
                 self.TextEdit1.clear()
                 for i in StringData:
