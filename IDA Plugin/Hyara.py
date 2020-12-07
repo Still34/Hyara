@@ -1,4 +1,4 @@
-import idaapi, idc, idautils, ida_nalt
+import idaapi, idc, idautils, ida_nalt, ida_kernwin
 from PIL import Image
 from PIL.ImageQt import ImageQt
 from collections import OrderedDict
@@ -1041,17 +1041,14 @@ class YaraPlugin(idaapi.plugin_t):
     def run(self, arg):
         plg = Hyara()
         plg.Show("Hyara")
-        try:
-            widget_a = find_widget("IDA View-A")
-            widget_Hyara = find_widget("Hyara")
-            widget_OW = find_widget("Output window")
-            if widget_Hyara and widget_a:
-                set_dock_pos("Hyara", "IDA View-A", DP_RIGHT)
+        widget_a = ida_kernwin.find_widget("IDA View-A")
+        widget_Hyara = ida_kernwin.find_widget("Hyara")
+        widget_OW = ida_kernwin.find_widget("Output window")
+        if widget_Hyara and widget_a:
+            ida_kernwin.set_dock_pos("Hyara", "IDA View-A", ida_kernwin.DP_RIGHT)
 
-                if widget_OW:
-                    set_dock_pos("Output window", "Functions window", DP_BOTTOM)
-        except:
-            print("find_widget option is available version 7.0 or later")
+            if widget_OW:
+                ida_kernwin.set_dock_pos("Output window", "Functions window", ida_kernwin.DP_BOTTOM)
         
 
     def term(self):
